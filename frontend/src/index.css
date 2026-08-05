@@ -1,0 +1,54 @@
+@import 'tailwindcss';
+
+/*
+  🍿 Caramel Popcorn design tokens (Content.md §3)
+  Palette: Yellow (primary), White, Red (accent).
+  Tailwind v4 reads these @theme vars to generate utilities like
+  bg-popcorn-500, text-butter-700, bg-berry-500, etc.
+*/
+@theme {
+  /* Primary — buttery popcorn yellow */
+  --color-popcorn-50: #fffdf2;
+  --color-popcorn-100: #fff8d6;
+  --color-popcorn-200: #ffefa8;
+  --color-popcorn-300: #ffe270;
+  --color-popcorn-400: #ffd23f;
+  --color-popcorn-500: #ffc21c;
+  --color-popcorn-600: #eaa400;
+  --color-popcorn-700: #b97e00;
+  --color-popcorn-800: #935f0a;
+  --color-popcorn-900: #7a4e0f;
+
+  /* Warm neutral — kernel / caramel browns for text & borders */
+  --color-butter-50: #faf7f0;
+  --color-butter-100: #f2ebda;
+  --color-butter-500: #b08d57;
+  --color-butter-700: #6b4f2a;
+  --color-butter-900: #3d2c15;
+
+  /* Accent — cinema red */
+  --color-berry-50: #fff1f1;
+  --color-berry-100: #ffdada;
+  --color-berry-400: #ff5a5a;
+  --color-berry-500: #e63535;
+  --color-berry-600: #c81e1e;
+  --color-berry-700: #a11414;
+
+  --font-display: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+  --font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-popcorn-50);
+  color: var(--color-butter-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
