@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { isSupabaseConfigured } from '../config/index.js';
+import { isSupabaseConfigured, isGoogleConfigured } from '../config/index.js';
+import authRoutes from './auth.routes.js';
+import userRoutes from './users.routes.js';
+import metaRoutes from './meta.routes.js';
+import restaurantRoutes from './restaurants.routes.js';
+import reviewRoutes from './reviews.routes.js';
+import itemRoutes from './items.routes.js';
 
 const router = Router();
 
@@ -12,14 +18,19 @@ router.get('/health', (req, res) => {
     status: 'ok',
     service: 'caramel-popcorn-api',
     supabase: isSupabaseConfigured ? 'configured' : 'not-configured',
+    google: isGoogleConfigured ? 'configured' : 'not-configured',
     timestamp: new Date().toISOString(),
   });
 });
 
-// Feature routers get mounted here as they are built:
-// router.use('/auth', authRoutes);
-// router.use('/restaurants', restaurantRoutes);
-// router.use('/reviews', reviewRoutes);
+router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
+router.use('/meta', metaRoutes);
+router.use('/restaurants', restaurantRoutes);
+router.use('/reviews', reviewRoutes);
+router.use('/items', itemRoutes);
+
+// Feature routers mounted here as they are built:
 // router.use('/reports', reportRoutes);
 
 export default router;

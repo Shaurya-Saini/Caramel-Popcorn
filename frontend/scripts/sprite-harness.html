@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      canvas { display: block; }
+    </style>
+    <!-- Resolve the bare "three" specifier used inside GLTFLoader. -->
+    <script type="importmap">
+      { "imports": { "three": "/node_modules/three/build/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from 'three'
+      import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js'
+
+      const params = new URLSearchParams(location.search)
+      const modelUrl = params.get('model')
+      const SIZE = Number(params.get('size') || 256)
+
+      const renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        preserveDrawingBuffer: true,
+      })
+      renderer.setSize(SIZE, SIZE)
+      renderer.setClearColor(0x000000, 0)
+      document.body.appendChild(renderer.domElement)
+
+      const scene = new THREE.Scene()
+      const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100)
+      camera.position.set(0, 0, 4)
+
+      // Bright, even lighting for a light/pale popcorn look (keep a little
+      // directional contrast so the form still reads).
+      scene.add(new THREE.AmbientLight(0xffffff, 0.95))
+      const key = new THREE.DirectionalLight(0xffffff, 0.9)
+      key.position.set(2, 3, 4)
+      scene.add(key)
+      const fill = new THREE.DirectionalLight(0xffffff, 0.5)
+      fill.position.set(-3, -1, 2)
+      scene.add(fill)
+      const rim = new THREE.DirectionalLight(0xfffdf0, 0.35)
+      rim.position.set(0, 4, -3)
+      scene.add(rim)
+
+      const pivot = new THREE.Group()
+      scene.add(pivot)
+
+      new GLTFLoader().load(
+        modelUrl,
+        (gltf) => {
+          const model = gltf.scene
+          // Override all materials with a uniform light "plain popcorn" colour —
+          // the source textures are dark/olive; we want bright pale-yellow.
+          const popcornMat = new THREE.MeshStandardMaterial({
+            color: 0xffe27d, // butter-popcorn yellow
+            roughness: 0.85,
+            metalness: 0,
+          })
+          model.traverse((o) => {
+            if (o.isMesh) o.material = popcornMat
+          })
+          // Center + normalise scale so the largest dimension fits the frame.
+          const box = new THREE.Box3().setFromObject(model)
+          const size = box.getSize(new THREE.Vector3())
+          const center = box.getCenter(new THREE.Vector3())
+          model.position.sub(center)
+          const maxDim = Math.max(size.x, size.y, size.z) || 1
+          const scale = 2.2 / maxDim
+          model.scale.setScalar(scale)
+          pivot.add(model)
+          window.__ready = true
+        },
+        undefined,
+        (err) => {
+          window.__error = String(err)
+        }
+      )
+
+      // Render at small yaw/pitch offsets (radians) and return a PNG data URL.
+      // Small offsets keep flat-ish models (e.g. popcorn1) facing the camera so
+      // they stay visible, while still giving per-sprite variety.
+      window.renderAngle = (yaw, pitch) => {
+        pivot.rotation.set(-0.2 + pitch, yaw, 0)
+        renderer.render(scene, camera)
+        return renderer.domElement.toDataURL('image/png')
+      }
+    </script>
+  </body>
+</html>

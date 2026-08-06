@@ -77,9 +77,11 @@ Restaurants live in a **shared public database** — once one user adds a restau
 - Popcorn-themed illustrative elements throughout (icons, empty states, loaders)
 
 **Signature Interaction — Popcorn Click Animation**
-- **Desktop:** On click anywhere, a small popcorn kernel spawns at the click point and falls to the bottom of the screen, accumulating into a growing pile with repeated clicks (can fill the screen with enough clicks)
-- **Mobile:** Lighter-weight version triggered on tap (fewer/simpler kernels to protect performance on mobile GPUs)
-- **Non-persistent:** Pile resets on refresh or page navigation — purely a client-side, in-memory visual effect (no state saved)
+- **Real physics (Matter.js).** Clicking anywhere drops a popcorn body into a Matter.js physics world: it falls under **actual gravity**, **collides with and bounces off** the other popcorn, and stacks into a real pile. The **cursor is an (invisible) physics body**, so moving the mouse nudges/shoves the pile (no dragging).
+- **Kernels use the real 3D popcorn models.** The two supplied models (`popcorn1.glb`, `popcorn2.glb`) are pre-rendered to lightweight 2D sprites (several angles each); each body draws a random one so both appear. The heavy `.glb` files are never shipped to the browser (they're baked to sprites at build time). Popcorn is coloured a **light, plain-popcorn pale-yellow/white** (not caramel).
+- **Mobile:** Lighter-weight version (fewer, smaller bodies) to protect performance on mobile.
+- **Non-persistent:** The *pile* resets on refresh or page navigation (purely client-side, in-memory — no state saved), but the click effect itself keeps working on every page.
+- **Scoped:** the physics world is confined to this one effect; no other component/DOM is affected.
 
 **Responsiveness:** Full responsive design across mobile, tablet, and desktop breakpoints.
 

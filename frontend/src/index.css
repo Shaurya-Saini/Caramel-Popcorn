@@ -38,6 +38,12 @@
   --font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
 }
 
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-butter-100 bg-white px-4 py-2.5 text-butter-900 outline-none focus:border-popcorn-500;
+  }
+}
+
 html,
 body,
 #root {

@@ -14,10 +14,28 @@ export const config = {
     .split(',')
     .map((o) => o.trim())
     .filter(Boolean),
+  // Where to send the browser back to after a successful OAuth login.
+  frontendUrl: (process.env.CORS_ORIGINS || 'http://localhost:5173')
+    .split(',')[0]
+    .trim(),
   supabase: {
     url: process.env.SUPABASE_URL || '',
-    // Service-role key: server-side only, NEVER expose to the client.
+    // Service-role/secret key: server-side only, bypasses RLS. NEVER expose to the client.
     serviceKey: process.env.SUPABASE_SERVICE_KEY || '',
+  },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    callbackUrl:
+      process.env.GOOGLE_CALLBACK_URL ||
+      'http://localhost:4000/api/auth/google/callback',
+  },
+  jwt: {
+    secret: process.env.SESSION_SECRET || 'dev-insecure-secret',
+    // 7 days — matches the auth cookie maxAge below.
+    expiresIn: '7d',
+    cookieName: 'cp_session',
+    maxAgeMs: 7 * 24 * 60 * 60 * 1000,
   },
 };
 
@@ -29,4 +47,9 @@ export const isProd = config.env === 'production';
  */
 export const isSupabaseConfigured = Boolean(
   config.supabase.url && config.supabase.serviceKey
+);
+
+/** True when Google OAuth credentials are present. */
+export const isGoogleConfigured = Boolean(
+  config.google.clientId && config.google.clientSecret
 );

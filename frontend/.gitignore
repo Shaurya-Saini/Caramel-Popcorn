@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Local env (keep .env.example)
+.env
+.env.*
+!.env.example
+
+# Large 3D source models — baked to sprites, never shipped
+models/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

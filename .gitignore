@@ -1,0 +1,33 @@
+# === Secrets — never commit ===
+.env
+.env.*
+!.env.example
+# Google OAuth client secret download
+client_secret_*.json
+*.apps.googleusercontent.com.json
+
+# === Local AI-agent guidance (kept out of the repo per project preference) ===
+CLAUDE.md
+
+# === Large 3D source models (baked to sprites via `npm run render:sprites`; not shipped) ===
+frontend/models/
+
+# === Dependencies & build output ===
+node_modules/
+dist/
+dist-ssr/
+
+# === Logs ===
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === OS / editor cruft ===
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.sw?

@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { config } from './config/index.js';
 import routes from './routes/index.js';
 import { notFound, errorHandler } from './middleware/error.js';
@@ -14,6 +15,7 @@ export function createApp() {
   app.use(cors({ origin: config.corsOrigins, credentials: true }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
 
   // Friendly root.
   app.get('/', (req, res) => {
