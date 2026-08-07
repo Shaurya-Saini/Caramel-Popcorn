@@ -170,7 +170,7 @@ export async function getRatingSummaries(restaurantIds) {
 
 /**
  * Reviews for a restaurant, with the two independent privacy flags enforced
- * SERVER-SIDE (Content.md §6 / CLAUDE.md §6):
+ * SERVER-SIDE:
  *   - Generic part (ratings + text) shown only if is_public_generic OR viewer is owner.
  *   - Favourite-items part shown only if is_public_items OR viewer is owner.
  * A review with no visible part is omitted for non-owners.

@@ -72,8 +72,7 @@ CaramelPopcorn/
 │   │   └── config/       Centralised env + Supabase client
 │   ├── db/migrations/    SQL schema + dedup RPC
 │   └── scripts/          End-to-end test scripts
-├── docs/              README assets (banner, architecture diagram)
-└── CLAUDE.md          Working guide: product, conventions, deployment, decisions
+└── docs/              README assets (banner, architecture diagram)
 ```
 
 ## Local development
@@ -98,7 +97,7 @@ Then open http://localhost:5173, sign in with Google, and browse or add a place.
 
 ## Deployment
 
-Frontend deploys to Cloudflare Pages and the backend to Render, with the database already on Supabase. The full runbook — environment variables, custom-domain and cookie setup, OAuth and Places-key configuration, and a production smoke test — is in [`CLAUDE.md`](./CLAUDE.md#10-deployment--operations).
+The frontend deploys to Cloudflare Pages (build `npm run build`, output `dist`) and the backend to Render (build `npm install`, start `npm start`), with the database on Supabase. The two apps are served from one registrable domain — the frontend on the apex/subdomain and the backend on an `api.` sibling — so the `SameSite=Lax` httpOnly session cookie stays first-party without relying on third-party cookies. Set `VITE_API_URL` (frontend) and, on the backend, `NODE_ENV=production`, `CORS_ORIGINS`, the Supabase and Google credentials, and a `SESSION_SECRET`.
 
 ## License
 
