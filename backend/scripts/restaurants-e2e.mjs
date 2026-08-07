@@ -92,6 +92,18 @@ try {
   ok('GET /restaurants public + lists entries',
      list.status === 200 && listBody.restaurants.some((r) => r.id === created[0]));
 
+  // 6b. List rows are enriched with rating summary (step 6).
+  const mine = listBody.restaurants.find((r) => r.id === created[0]);
+  ok('list row carries avgRating + reviewCount',
+     mine && 'avgRating' in mine && mine.avgRating === null && mine.reviewCount === 0,
+     `avgRating=${mine?.avgRating} reviewCount=${mine?.reviewCount}`);
+
+  // 6c. sort=rating is accepted and returns the list.
+  const byRating = await fetch(`${API}/restaurants?sort=rating`);
+  const byRatingBody = await byRating.json();
+  ok('GET /restaurants?sort=rating -> 200 + list',
+     byRating.status === 200 && Array.isArray(byRatingBody.restaurants));
+
   // 7. GET detail (public)
   const det = await fetch(`${API}/restaurants/${created[0]}`);
   const detBody = await det.json();
@@ -100,6 +112,33 @@ try {
   // 8. Unknown id -> 404
   const missing = await fetch(`${API}/restaurants/00000000-0000-0000-0000-000000000000`);
   ok('GET unknown restaurant -> 404', missing.status === 404);
+
+  // 9. Location backfill: create a coordless place, then set its location.
+  const cl = await fetch(`${API}/restaurants`, {
+    method: 'POST', headers: jsonHeaders,
+    body: JSON.stringify({ name: 'Coordless ' + Date.now(), confirmCreate: true }),
+  });
+  const clBody = await cl.json();
+  if (clBody.restaurant) created.push(clBody.restaurant.id);
+  ok('coordless create has null coords', clBody.restaurant?.lat == null && clBody.restaurant?.lng == null);
+
+  const setLoc = await fetch(`${API}/restaurants/${clBody.restaurant.id}/location`, {
+    method: 'PATCH', headers: jsonHeaders,
+    body: JSON.stringify({ lat: 12.97, lng: 79.17, address: 'Vellore' }),
+  });
+  const setLocBody = await setLoc.json();
+  ok('PATCH /:id/location backfills coords',
+     setLoc.status === 200 && setLocBody.restaurant?.lat === 12.97 && setLocBody.restaurant?.lng === 79.17);
+
+  const setAgain = await fetch(`${API}/restaurants/${clBody.restaurant.id}/location`, {
+    method: 'PATCH', headers: jsonHeaders, body: JSON.stringify({ lat: 1, lng: 1 }),
+  });
+  ok('PATCH /:id/location on located place -> 409', setAgain.status === 409);
+
+  const noAuthLoc = await fetch(`${API}/restaurants/${clBody.restaurant.id}/location`, {
+    method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ lat: 2, lng: 2 }),
+  });
+  ok('PATCH /:id/location without auth -> 401', noAuthLoc.status === 401);
 } finally {
   const sb = requireSupabase();
   for (const id of created) await sb.from('restaurants').delete().eq('id', id);

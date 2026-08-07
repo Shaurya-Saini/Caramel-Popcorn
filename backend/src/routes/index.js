@@ -6,6 +6,8 @@ import metaRoutes from './meta.routes.js';
 import restaurantRoutes from './restaurants.routes.js';
 import reviewRoutes from './reviews.routes.js';
 import itemRoutes from './items.routes.js';
+import reportRoutes from './reports.routes.js';
+import geoRoutes from './geo.routes.js';
 
 const router = Router();
 
@@ -29,8 +31,7 @@ router.use('/meta', metaRoutes);
 router.use('/restaurants', restaurantRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/items', itemRoutes);
-
-// Feature routers mounted here as they are built:
-// router.use('/reports', reportRoutes);
+router.use('/reports', reportRoutes);
+router.use('/geo', geoRoutes);
 
 export default router;

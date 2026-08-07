@@ -5,6 +5,7 @@ import {
   createRestaurant,
   getRestaurantById,
   listRestaurants,
+  setRestaurantLocation,
 } from '../services/restaurantService.js';
 import { listForRestaurant, getOwnReview } from '../services/reviewService.js';
 
@@ -27,8 +28,9 @@ function parseCoords(lat, lng) {
 }
 
 /**
- * GET /api/restaurants — public list.
- * Query: ?cuisine=<tag>&sort=recent|name
+ * GET /api/restaurants — public list, each row enriched with avgRating +
+ * reviewCount (over public generic reviews).
+ * Query: ?cuisine=<tag>&sort=recent|name|rating
  */
 router.get('/', async (req, res) => {
   const { cuisine, sort } = req.query;
@@ -111,6 +113,20 @@ router.post('/', requireAuth, async (req, res) => {
     createdBy: req.user.id,
   });
   res.status(201).json({ restaurant });
+});
+
+/**
+ * PATCH /api/restaurants/:id/location — backfill a missing location (auth).
+ * Body: { lat, lng, address? }. 409 if the place already has coordinates.
+ */
+router.patch('/:id/location', requireAuth, async (req, res) => {
+  const { lat, lng, address } = req.body ?? {};
+  if (lat == null || lng == null) {
+    return res.status(400).json({ error: 'Bad Request', message: 'lat and lng are required' });
+  }
+  const coords = parseCoords(lat, lng);
+  const restaurant = await setRestaurantLocation(req.params.id, { ...coords, address });
+  res.json({ restaurant });
 });
 
 export default router;

@@ -1,4 +1,4 @@
-import { config } from '../config/index.js';
+import { config, isAdminEmail } from '../config/index.js';
 import { verifySession } from '../lib/token.js';
 import { getUserById } from '../services/userService.js';
 
@@ -43,4 +43,18 @@ export async function requireAuth(req, res, next) {
     // Invalid/expired token
     return res.status(401).json({ error: 'Unauthorized', message: 'Invalid session' });
   }
+}
+
+/**
+ * Requires an authenticated admin (email on the ADMIN_EMAILS allowlist).
+ * Chain AFTER requireAuth so `req.user` is populated. 403 for non-admins.
+ */
+export function requireAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized', message: 'Not signed in' });
+  }
+  if (!isAdminEmail(req.user.email)) {
+    return res.status(403).json({ error: 'Forbidden', message: 'Admin access required' });
+  }
+  next();
 }

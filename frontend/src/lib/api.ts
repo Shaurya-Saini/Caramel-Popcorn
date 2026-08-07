@@ -73,6 +73,8 @@ export interface User {
   lat: number | null;
   lng: number | null;
   createdAt: string;
+  /** True when the user's email is on the backend ADMIN_EMAILS allowlist. */
+  isAdmin: boolean;
 }
 
 export interface Restaurant {
@@ -84,6 +86,9 @@ export interface Restaurant {
   cuisineTags: string[];
   createdBy: string | null;
   createdAt: string;
+  /** Present on the list endpoint (enriched over public generic reviews). */
+  avgRating?: number | null;
+  reviewCount?: number;
 }
 
 /** A fuzzy-dedup candidate returned when adding a possibly-duplicate place. */
@@ -97,6 +102,34 @@ export interface RestaurantMatch {
   nameSimilarity: number;
   distanceM: number | null;
 }
+
+/** A geocoded place candidate for the exact-place picker (step-1 fix). */
+export interface GeoPlace {
+  displayName: string;
+  name: string;
+  address: string;
+  lat: number | null;
+  lng: number | null;
+  category: string | null;
+  type: string | null;
+}
+
+/**
+ * Forward-geocode free text into candidate places. Optional `bias` (the
+ * searcher's coords) surfaces nearby branches first.
+ */
+export const geoSearch = (q: string, bias?: { lat: number; lng: number } | null) => {
+  const params = new URLSearchParams({ q });
+  if (bias) {
+    params.set('lat', String(bias.lat));
+    params.set('lng', String(bias.lng));
+  }
+  return apiGet<{ places: GeoPlace[] }>(`/geo/search?${params.toString()}`);
+};
+
+/** Reverse-geocode a pinned point into a single place (address for coords). */
+export const geoReverse = (lat: number, lng: number) =>
+  apiGet<{ place: GeoPlace | null }>(`/geo/reverse?lat=${lat}&lng=${lng}`);
 
 /** Google Maps deep link (Content.md §4) — static-map-free, cross-platform. */
 export function googleMapsUrl(r: Pick<Restaurant, 'name' | 'address' | 'lat' | 'lng'>): string {
@@ -151,6 +184,32 @@ export interface MyReview {
 
 export const RATING_KEYS = ['food', 'service', 'price', 'ambiance'] as const;
 export type RatingKey = (typeof RATING_KEYS)[number];
+
+// --- Reports / moderation (step 8) -----------------------------------------
+
+export type ReportTargetType = 'review' | 'restaurant';
+export type ReportStatus = 'open' | 'reviewed' | 'dismissed' | 'actioned';
+
+/** Preset reasons offered in the report dialog (Content.md §2.5). */
+export const REPORT_REASONS = [
+  'Spam',
+  'Inappropriate content',
+  'Incorrect info',
+  'Other',
+] as const;
+
+export interface Report {
+  id: string;
+  targetType: ReportTargetType;
+  targetId: string;
+  reporterId: string | null;
+  reason: string | null;
+  status: ReportStatus;
+  createdAt: string;
+  /** Enriched on the admin queue only. */
+  reporter?: { id: string; name: string | null; email: string | null } | null;
+  targetLabel?: string | null;
+}
 
 /** Where the browser goes to start Google login (full-page redirect). */
 export const googleLoginUrl = `${API_URL}/auth/google`;

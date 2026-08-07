@@ -1,60 +1,123 @@
 @import 'tailwindcss';
 
 /*
-  🍿 Caramel Popcorn design tokens (Content.md §3)
-  Palette: Yellow (primary), White, Red (accent).
-  Tailwind v4 reads these @theme vars to generate utilities like
-  bg-popcorn-500, text-butter-700, bg-berry-500, etc.
+  🍿 Caramel Popcorn — design system (Content.md §3 + session-7 polish)
+  Type:   DynaPuff (display / brand / headings) + Manrope (body / UI).
+  Palette: warm cream canvas, buttery-yellow primary, cinema-red accent,
+           caramel-brown neutrals. Semantic tokens below back the shadcn-style
+           primitives in components/ui.
 */
 @theme {
   /* Primary — buttery popcorn yellow */
   --color-popcorn-50: #fffdf2;
-  --color-popcorn-100: #fff8d6;
-  --color-popcorn-200: #ffefa8;
-  --color-popcorn-300: #ffe270;
-  --color-popcorn-400: #ffd23f;
-  --color-popcorn-500: #ffc21c;
-  --color-popcorn-600: #eaa400;
-  --color-popcorn-700: #b97e00;
-  --color-popcorn-800: #935f0a;
-  --color-popcorn-900: #7a4e0f;
+  --color-popcorn-100: #fff6d1;
+  --color-popcorn-200: #ffec9e;
+  --color-popcorn-300: #ffde63;
+  --color-popcorn-400: #ffcd33;
+  --color-popcorn-500: #f9ba11;
+  --color-popcorn-600: #e29a00;
+  --color-popcorn-700: #b97600;
+  --color-popcorn-800: #935c0a;
+  --color-popcorn-900: #7a4c0f;
 
-  /* Warm neutral — kernel / caramel browns for text & borders */
-  --color-butter-50: #faf7f0;
-  --color-butter-100: #f2ebda;
-  --color-butter-500: #b08d57;
-  --color-butter-700: #6b4f2a;
-  --color-butter-900: #3d2c15;
+  /* Warm neutral — kernel / caramel browns for text, borders, surfaces */
+  --color-butter-50: #faf6ec;
+  --color-butter-100: #f1e8d4;
+  --color-butter-200: #e6d7ba;
+  --color-butter-300: #d4bd93;
+  --color-butter-400: #bd9d68;
+  --color-butter-500: #a5824c;
+  --color-butter-600: #856239;
+  --color-butter-700: #6b4f2f;
+  --color-butter-800: #4d3820;
+  --color-butter-900: #362818;
 
   /* Accent — cinema red */
   --color-berry-50: #fff1f1;
-  --color-berry-100: #ffdada;
+  --color-berry-100: #ffdcdc;
+  --color-berry-200: #ffbfbf;
   --color-berry-400: #ff5a5a;
-  --color-berry-500: #e63535;
-  --color-berry-600: #c81e1e;
-  --color-berry-700: #a11414;
+  --color-berry-500: #ec3a3a;
+  --color-berry-600: #d11f1f;
+  --color-berry-700: #a81616;
 
-  --font-display: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
-  --font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* Semantic tokens (shadcn-style) mapped onto the popcorn palette */
+  --color-background: #fbf6ea;
+  --color-foreground: #362818;
+  --color-card: #ffffff;
+  --color-card-foreground: #362818;
+  --color-muted: #f4ecdb;
+  --color-muted-foreground: #856239;
+  --color-border: #ece0c9;
+  --color-input: #e6d7ba;
+  --color-ring: #ffcd33;
+  --color-primary: #f9ba11;
+  --color-primary-foreground: #362818;
+  --color-secondary: #ffffff;
+  --color-secondary-foreground: #4d3820;
+  --color-accent: #ec3a3a;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #d11f1f;
+  --color-destructive-foreground: #ffffff;
+
+  --font-display: 'DynaPuff Variable', 'Fredoka', 'Segoe UI', system-ui, cursive;
+  --font-sans: 'Manrope Variable', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  /* Consistent radii */
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
 }
 
-@layer components {
-  .input {
-    @apply w-full rounded-lg border border-butter-100 bg-white px-4 py-2.5 text-butter-900 outline-none focus:border-popcorn-500;
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100vh;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-background);
+    /* faint buttery glow from the top so the canvas isn't flat cream */
+    background-image: radial-gradient(
+      1200px 600px at 50% -200px,
+      rgba(249, 186, 17, 0.16),
+      transparent 70%
+    );
+    background-attachment: fixed;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* DynaPuff carries the brand voice on titles; body/labels stay Manrope. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
   }
 }
 
-html,
-body,
-#root {
-  min-height: 100vh;
-}
+@layer components {
+  /* Shared form control (kept: many components use className="input"). */
+  .input {
+    @apply w-full rounded-xl border border-input bg-white px-4 py-2.5 text-[15px] text-butter-900 shadow-sm outline-none transition placeholder:text-butter-400 focus:border-popcorn-400 focus:ring-4 focus:ring-popcorn-200/60;
+  }
 
-body {
-  margin: 0;
-  background-color: var(--color-popcorn-50);
-  color: var(--color-butter-900);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  .font-display {
+    font-family: var(--font-display);
+  }
 }

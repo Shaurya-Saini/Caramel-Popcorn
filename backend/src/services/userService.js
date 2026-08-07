@@ -1,4 +1,5 @@
 import { requireSupabase } from '../config/supabase.js';
+import { isAdminEmail } from '../config/index.js';
 
 const TABLE = 'users';
 
@@ -15,6 +16,8 @@ function toUser(row) {
     lat: row.lat,
     lng: row.lng,
     createdAt: row.created_at,
+    // Derived from the ADMIN_EMAILS allowlist — lets the UI show the report queue.
+    isAdmin: isAdminEmail(row.email),
   };
 }
 

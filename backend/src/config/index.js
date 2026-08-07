@@ -29,6 +29,9 @@ export const config = {
     callbackUrl:
       process.env.GOOGLE_CALLBACK_URL ||
       'http://localhost:4000/api/auth/google/callback',
+    // Server-side key for Places API (New) Text Search — when set, place search
+    // uses Google (full POI coverage incl. multiple branches) instead of OSM.
+    mapsApiKey: process.env.GOOGLE_MAPS_API_KEY || '',
   },
   jwt: {
     secret: process.env.SESSION_SECRET || 'dev-insecure-secret',
@@ -37,9 +40,30 @@ export const config = {
     cookieName: 'cp_session',
     maxAgeMs: 7 * 24 * 60 * 60 * 1000,
   },
+  admin: {
+    // Comma-separated emails granted moderation access (the report queue).
+    // Basic v1 admin capability — no roles table yet (Content.md §2.5).
+    emails: (process.env.ADMIN_EMAILS || '')
+      .split(',')
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean),
+  },
+  geocode: {
+    // Forward/reverse geocoding for the "pick the exact place" flow. Keyless
+    // OSM Nominatim by default; swap for a keyed/self-hosted geocoder in prod.
+    // The service appends /search and /reverse to this base.
+    baseUrl: process.env.GEOCODE_BASE_URL || 'https://nominatim.openstreetmap.org',
+    // Nominatim's usage policy REQUIRES a descriptive User-Agent with contact.
+    userAgent: process.env.GEOCODE_USER_AGENT || 'CaramelPopcorn/1.0 (dev)',
+  },
 };
 
 export const isProd = config.env === 'production';
+
+/** True when the given email is on the admin allowlist. */
+export function isAdminEmail(email) {
+  return Boolean(email) && config.admin.emails.includes(String(email).toLowerCase());
+}
 
 /**
  * Returns true when Supabase credentials are present. Lets the app boot for

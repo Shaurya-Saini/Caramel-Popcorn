@@ -127,6 +127,48 @@ export async function deleteReview(id, userId) {
 }
 
 /**
+ * Batch rating summaries for a set of restaurants, for the public list view.
+ * Only PUBLIC generic reviews count (the list is anonymous/public — no viewer
+ * gets private parts here). Mirrors listForRestaurant's rule: each review
+ * contributes the mean of its own set ratings, then we average those.
+ * Returns Map<restaurantId, { avgRating: number|null, reviewCount: number }>.
+ */
+export async function getRatingSummaries(restaurantIds) {
+  const summaries = new Map();
+  if (!restaurantIds?.length) return summaries;
+
+  const sb = requireSupabase();
+  const { data, error } = await sb
+    .from(TABLE)
+    .select('restaurant_id, rating_food, rating_service, rating_price, rating_ambiance')
+    .in('restaurant_id', restaurantIds)
+    .eq('is_public_generic', true);
+  if (error) throw error;
+
+  // restaurant_id -> { sum of per-review means, count of rated reviews }
+  const acc = new Map();
+  for (const row of data ?? []) {
+    const vals = [row.rating_food, row.rating_service, row.rating_price, row.rating_ambiance]
+      .filter((v) => v !== null && v !== undefined);
+    if (!vals.length) continue;
+    const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const cur = acc.get(row.restaurant_id) ?? { sum: 0, count: 0 };
+    cur.sum += mean;
+    cur.count += 1;
+    acc.set(row.restaurant_id, cur);
+  }
+
+  for (const id of restaurantIds) {
+    const cur = acc.get(id);
+    summaries.set(id, {
+      avgRating: cur ? Math.round((cur.sum / cur.count) * 10) / 10 : null,
+      reviewCount: cur ? cur.count : 0,
+    });
+  }
+  return summaries;
+}
+
+/**
  * Reviews for a restaurant, with the two independent privacy flags enforced
  * SERVER-SIDE (Content.md §6 / CLAUDE.md §6):
  *   - Generic part (ratings + text) shown only if is_public_generic OR viewer is owner.

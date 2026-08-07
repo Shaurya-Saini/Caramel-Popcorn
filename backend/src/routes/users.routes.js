@@ -23,6 +23,15 @@ router.patch('/me', requireAuth, async (req, res) => {
   if (name !== undefined && typeof name !== 'string') {
     return res.status(400).json({ error: 'Bad Request', message: 'name must be a string' });
   }
+  // Coordinates: allow null (clear) or a valid pair; reject out-of-range/NaN.
+  for (const [key, val, min, max] of [['lat', lat, -90, 90], ['lng', lng, -180, 180]]) {
+    if (val !== undefined && val !== null) {
+      const n = Number(val);
+      if (Number.isNaN(n) || n < min || n > max) {
+        return res.status(400).json({ error: 'Bad Request', message: `${key} is out of range` });
+      }
+    }
+  }
 
   const updated = await updateProfile(req.user.id, { name, tasteTags, manualLocation, lat, lng });
   res.json({ user: updated });
