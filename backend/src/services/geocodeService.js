@@ -106,20 +106,8 @@ async function googleTextSearch(q, { lat = null, lng = null, limit = 8 } = {}) {
   }));
 }
 
-/**
- * Forward-geocode free text → candidate places with exact coordinates.
- * Uses Google Places (full coverage) when a key is configured; otherwise falls
- * back to keyless OSM Nominatim (sparse POI coverage — misses some branches).
- * Optional { lat, lng } biases results toward the searcher's location.
- */
-export async function searchPlaces(query, { lat = null, lng = null, limit = 8 } = {}) {
-  const q = String(query || '').trim();
-  if (q.length < 3) return [];
-
-  if (config.google.mapsApiKey) {
-    return googleTextSearch(q, { lat, lng, limit });
-  }
-
+/** Keyless OSM Nominatim forward search → our place shape (sparse POI coverage). */
+async function nominatimSearch(q, limit) {
   const rows = await nominatim('/search', {
     q,
     format: 'jsonv2',
@@ -127,6 +115,32 @@ export async function searchPlaces(query, { lat = null, lng = null, limit = 8 } 
     limit,
   });
   return (Array.isArray(rows) ? rows : []).map(toPlace).filter(Boolean);
+}
+
+/**
+ * Forward-geocode free text → candidate places with exact coordinates.
+ * Uses Google Places (full coverage) when a key is configured; otherwise — or if
+ * Google fails/errors/hits its daily quota cap (429) — falls back to keyless OSM
+ * Nominatim (sparse POI coverage, but free and always available). This makes the
+ * Google daily-quota cap a graceful degradation, not a broken search box, and
+ * guarantees no billable calls once the cap is reached.
+ * Optional { lat, lng } biases results toward the searcher's location.
+ */
+export async function searchPlaces(query, { lat = null, lng = null, limit = 8 } = {}) {
+  const q = String(query || '').trim();
+  if (q.length < 3) return [];
+
+  if (config.google.mapsApiKey) {
+    try {
+      return await googleTextSearch(q, { lat, lng, limit });
+    } catch (err) {
+      // Google unavailable, errored, or quota-capped — degrade to free OSM.
+      // (googleTextSearch already logged Google's specific reason above.)
+      console.warn(`Google Places search failed (${err.message}); falling back to OSM Nominatim.`);
+    }
+  }
+
+  return nominatimSearch(q, limit);
 }
 
 /** Reverse-geocode coordinates → a single place (address for a pinned point). */

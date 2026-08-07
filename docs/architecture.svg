@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 620" role="img" aria-label="Caramel Popcorn architecture">
+  <rect x="1" y="1" width="1158" height="618" rx="20" fill="#FCF8EF" stroke="#EADFC6" stroke-width="2"/>
+
+  <!-- ============ MAIN TIER ============ -->
+
+  <!-- Client card -->
+  <rect x="40" y="90" width="330" height="210" rx="14" fill="#FFFFFF" stroke="#E7DCC3" stroke-width="1.5"/>
+  <rect x="40" y="90" width="6" height="210" rx="3" fill="#E0A81E"/>
+  <text x="64" y="124" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#3A2E1E">Client — React 19 + TypeScript</text>
+  <text x="64" y="146" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#9A8B6E">Cloudflare Pages</text>
+  <g font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#5B4E38">
+    <circle cx="66" cy="172" r="3" fill="#E0A81E"/><text x="78" y="176">Vite SPA · Tailwind v4 design tokens</text>
+    <circle cx="66" cy="198" r="3" fill="#E0A81E"/><text x="78" y="202">shadcn-style UI · DynaPuff / Manrope</text>
+    <circle cx="66" cy="224" r="3" fill="#E0A81E"/><text x="78" y="228">Popcorn click physics (Matter.js)</text>
+    <circle cx="66" cy="250" r="3" fill="#E0A81E"/><text x="78" y="254">Static map thumbnails + deep links</text>
+  </g>
+
+  <!-- API card -->
+  <rect x="415" y="90" width="330" height="210" rx="14" fill="#FFFFFF" stroke="#E7DCC3" stroke-width="1.5"/>
+  <rect x="415" y="90" width="6" height="210" rx="3" fill="#D7263D"/>
+  <text x="439" y="124" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#3A2E1E">API — Express 5 (Node.js)</text>
+  <text x="439" y="146" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#9A8B6E">Render</text>
+  <g font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#5B4E38">
+    <circle cx="441" cy="172" r="3" fill="#D7263D"/><text x="453" y="176">Google OAuth + JWT httpOnly cookie</text>
+    <circle cx="441" cy="198" r="3" fill="#D7263D"/><text x="453" y="202">Server-enforced per-part privacy</text>
+    <circle cx="441" cy="224" r="3" fill="#D7263D"/><text x="453" y="228">Fuzzy restaurant dedup (pg_trgm)</text>
+    <circle cx="441" cy="250" r="3" fill="#D7263D"/><text x="453" y="254">Reviews · favourites · moderation</text>
+  </g>
+
+  <!-- Data card -->
+  <rect x="790" y="90" width="330" height="210" rx="14" fill="#FFFFFF" stroke="#E7DCC3" stroke-width="1.5"/>
+  <rect x="790" y="90" width="6" height="210" rx="3" fill="#7A5A38"/>
+  <text x="814" y="124" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#3A2E1E">Data — Supabase</text>
+  <text x="814" y="146" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#9A8B6E">Managed PostgreSQL + Storage</text>
+  <g font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#5B4E38">
+    <circle cx="816" cy="172" r="3" fill="#7A5A38"/><text x="828" y="176">Postgres, RLS locked to service key</text>
+    <circle cx="816" cy="198" r="3" fill="#7A5A38"/><text x="828" y="202">Storage: private bucket, signed URLs</text>
+    <circle cx="816" cy="224" r="3" fill="#7A5A38"/><text x="828" y="228">Geo match RPC (trigram + Haversine)</text>
+    <circle cx="816" cy="250" r="3" fill="#7A5A38"/><text x="828" y="254">Image compression on upload (sharp)</text>
+  </g>
+
+  <!-- main connectors -->
+  <g stroke="#B29B6E" stroke-width="2" fill="#B29B6E">
+    <line x1="372" y1="195" x2="413" y2="195"/>
+    <polygon points="376,190 368,195 376,200"/>
+    <polygon points="409,190 417,195 409,200"/>
+    <line x1="747" y1="195" x2="788" y2="195"/>
+    <polygon points="751,190 743,195 751,200"/>
+    <polygon points="784,190 792,195 784,200"/>
+  </g>
+  <g font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" fill="#9A8B6E" text-anchor="middle">
+    <text x="392" y="182">HTTPS</text>
+    <text x="392" y="216">cookie</text>
+    <text x="767" y="182">SQL</text>
+    <text x="767" y="216">files</text>
+  </g>
+
+  <!-- ============ EXTERNAL TIER ============ -->
+
+  <!-- bus from API down to external services -->
+  <g stroke="#B29B6E" stroke-width="2" fill="#B29B6E">
+    <line x1="580" y1="300" x2="580" y2="360"/>
+    <line x1="195" y1="360" x2="965" y2="360"/>
+    <line x1="195" y1="360" x2="195" y2="418"/>
+    <line x1="580" y1="360" x2="580" y2="418"/>
+    <line x1="965" y1="360" x2="965" y2="418"/>
+    <polygon points="190,412 195,420 200,412"/>
+    <polygon points="575,412 580,420 585,412"/>
+    <polygon points="960,412 965,420 970,412"/>
+  </g>
+  <text x="596" y="336" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" fill="#9A8B6E">external services</text>
+
+  <!-- E1: OAuth -->
+  <rect x="45" y="420" width="300" height="150" rx="14" fill="#FFFFFF" stroke="#E7DCC3" stroke-width="1.5"/>
+  <rect x="45" y="420" width="6" height="150" rx="3" fill="#D7263D"/>
+  <text x="69" y="452" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#3A2E1E">Google OAuth 2.0</text>
+  <g font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#5B4E38">
+    <text x="69" y="482">Sign-in and identity. Backend</text>
+    <text x="69" y="502">verifies the id_token and mints</text>
+    <text x="69" y="522">its own session JWT.</text>
+  </g>
+
+  <!-- E2: Places -->
+  <rect x="430" y="420" width="300" height="150" rx="14" fill="#FFFFFF" stroke="#E7DCC3" stroke-width="1.5"/>
+  <rect x="430" y="420" width="6" height="150" rx="3" fill="#E0A81E"/>
+  <text x="454" y="452" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#3A2E1E">Google Places API (New)</text>
+  <g font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#5B4E38">
+    <text x="454" y="482">Text Search for exact places,</text>
+    <text x="454" y="502">daily-quota capped. Degrades to</text>
+    <text x="454" y="522">OSM Nominatim on failure/cap.</text>
+  </g>
+
+  <!-- E3: OSM -->
+  <rect x="815" y="420" width="300" height="150" rx="14" fill="#FFFFFF" stroke="#E7DCC3" stroke-width="1.5"/>
+  <rect x="815" y="420" width="6" height="150" rx="3" fill="#4C956C"/>
+  <text x="839" y="452" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#3A2E1E">OpenStreetMap</text>
+  <g font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#5B4E38">
+    <text x="839" y="482">Static map tiles (client) and</text>
+    <text x="839" y="502">Nominatim reverse-geocode +</text>
+    <text x="839" y="522">keyless search fallback (API).</text>
+  </g>
+</svg>
